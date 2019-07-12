@@ -11,7 +11,6 @@ function saveSelection() {
 }
 
 function is_include_in(div, to_find) {
-
 	if (to_find.nodeType === Node.TEXT_NODE)
 		to_find = to_find.parentNode;
 	for(var key of div.childNodes.values()) { 
@@ -21,6 +20,11 @@ function is_include_in(div, to_find) {
 		}
 	}
 	return false;
+}
+
+function wrap_node(node) {
+  let range = document.createRange();
+  range.selectNodeContents(node);
 }
 
 function get_a_node(something) {
@@ -46,18 +50,18 @@ function find_good_part(div, container) {
 	let index_container = children_array.indexOf(container);
 }
 
-function sumurize_offset_till_container_index(children_array, index_container) {
-	const to_reduce = children_array.slice(0,index_container);
-	const reducer = function(current_value, next_value)  { return (current_value + next_value.outerHTML.length + 1) }
-	return to_reduce.reduce((reducer), 0);
+function begin_or_end_node(range, node) {
+  if (get_a_node(range.endContainer) === node || get_a_node(range.startContainer) === node)
+    return true;
+  return false;
 }
 
+/*
 document.addEventListener('mouseup', () => {
 	let get_selection = saveSelection();
 	let div = document.querySelector('#isSelectionable');
 	let range = document.createRange();
 	range.selectNodeContents(div);
-	var instance = new Mark(div);
 
 	if (get_selection.intersectsNode(div))
 	{
@@ -69,7 +73,7 @@ document.addEventListener('mouseup', () => {
 		{
 			get_selection.setEnd(div, range.endOffset);
 		}
-	}
 	debugger;
+	}
 });
-
+*/
