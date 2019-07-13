@@ -16,8 +16,12 @@ class Mark {
   }
 
   get content() {
+    let text = "";
     const content = document.querySelectorAll(`.mark${this._number}`);
-    debugger;
+    for (let node of content.values()) {
+      text += node.innerText;
+    }
+    return text;
   }
 
   children_HTMLcollection_to_array() {
