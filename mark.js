@@ -74,8 +74,11 @@ class Mark {
     let node = range.startContainer;
     node = this.get_a_node(node);
     let html = node.innerHTML;
-    html =  this.insert_text_in_text(html, '</mark>', range.endOffset);
-    html =  this.insert_text_in_text(html, this.start_head(), range.startOffset);
+    // document.createElement(node.nodeName)
+    // .classList = node.classList // puis recuperer le debut et la fin du node creer et les inserer avant et apres la new mark pour eviter de se retrouver avec des nodes text autour des marks
+     debugger;
+    html =  this.insert_text_in_text(html, this.end_mark(), range.endOffset);
+    html =  this.insert_text_in_text(html, this.start_mark(), range.startOffset);
     node.innerHTML = html;
   }
 
@@ -83,8 +86,8 @@ class Mark {
     let range = this.get_selection
     node = this.get_a_node(node);
     let html = node.innerHTML;
-    html =  this.insert_text_in_text(html, '</mark>', html.length);
-    html =  this.insert_text_in_text(html, this.start_head(), range.startOffset);
+    html =  this.insert_text_in_text(html, this.end_mark(), html.length);
+    html =  this.insert_text_in_text(html, this.start_mark(), range.startOffset);
     node.innerHTML = html;
   }
 
@@ -92,8 +95,8 @@ class Mark {
     let range = this.get_selection
     node = this.get_a_node(node);
     let html = node.innerHTML;
-    html =  this.insert_text_in_text(html, '</mark>', range.endOffset);
-    html =  this.insert_text_in_text(html, this.start_head(), 0);
+    html =  this.insert_text_in_text(html, this.end_mark(), range.endOffset);
+    html =  this.insert_text_in_text(html, this.start_mark(), 0);
     node.innerHTML = html;
   }
 
@@ -144,14 +147,18 @@ class Mark {
   }
 
   create_surround_node() {
-    let mark = document.createElement('mark');
+    let mark = document.createElement(`mark${this._number}`);
     mark.classList.add(`mark${this._number}`);
     mark.classList.add('cas_general');
+    mark.classList.add('mark');
     return (mark);
   }
 
-  start_head() {
-    return '<mark class="mark' + this._number + " cas_general" + '">';
+  start_mark() {
+    return '<mark' + this._number + ' class="mark' + this._number + " cas_general mark" + '">';
+  }
+  end_mark() {
+  return '</mark' + this._number + '>';
   }
 
   wrap_node(node) {
