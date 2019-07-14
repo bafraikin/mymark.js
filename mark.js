@@ -1,5 +1,4 @@
 class Mark {
-
   constructor() {
     Mark.div = Mark.div || document.querySelector('#isSelectionable');
     this.failed = true;
@@ -87,8 +86,7 @@ class Mark {
 
   wrap_inside_node() {
     let range = this.get_selection
-    let node = range.startContainer;
-    node = this.get_a_node(node);
+    let node = this.get_a_node(range.startContainer);
     let html = node.innerHTML;
     let parts = this.create_spare_node(node);
     html =  this.insert_text_in_text(html, this.end_mark(parts[0]), range.endOffset);
@@ -98,9 +96,9 @@ class Mark {
     node.outerHTML = html;
   }
 
-  wrap_begin_node(node) {
+  wrap_begin_node() {
     let range = this.get_selection
-    node = this.get_a_node(node);
+    let node = this.get_a_node(range.startContainer);
     let html = node.innerHTML;
     let parts = this.create_spare_node(node);
     html =  this.insert_text_in_text(html, this.end_mark(parts[0]), html.length);
@@ -108,9 +106,9 @@ class Mark {
     node.innerHTML = html;
   }
 
-  wrap_end_node(node) {
+  wrap_end_node() {
     let range = this.get_selection
-    node = this.get_a_node(node);
+    let node = this.get_a_node(range.endContainer);
     let html = node.innerHTML;
     let parts = this.create_spare_node(node);
     html =  this.insert_text_in_text(html, this.end_mark(parts[0]), range.endOffset);
@@ -128,7 +126,6 @@ class Mark {
       this.wrap_inside_node();
     }
     else {
-      debugger;
       for (var node of array) {
         if (this.begin_node(node))
         {
@@ -154,27 +151,12 @@ class Mark {
     return (before + text + after);
   }
 
-  /*
-  is_include_in(div, to_find) {
-    to_find = this.get_a_node(to_find);
-    for(var key of div.childNodes.values()) { 
-      if (key == to_find)
-      {
-        return true;
-      }
-    }
-    return false;
-  }*/
-
-
   is_include_in(div, to_find) {
     to_find = this.get_a_node(to_find);
     let children = div.querySelectorAll(to_find.nodeName);
     for(var key of children.values()) { 
       if (key == to_find)
-      {
         return true;
-      }
     }
     return false;
   } 
@@ -190,6 +172,7 @@ class Mark {
   start_mark(part) {
     return part + '<mark' + this._number + ' class="mark' + this._number + " cas_general mark" + '">';
   }
+
   end_mark(part) {
     return '</mark' + this._number + '>' + part;
   }
