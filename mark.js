@@ -28,6 +28,14 @@ class Mark {
     return [].slice.call(Mark.div.children);
   }
 
+  is_node_in_container(container, node) {
+    if (node === Mark.div || node === document.body)
+      return false;
+    if (node === container)
+      return true;
+    is_node_in_container(container, node.parentNode);
+  }
+
   begin_node(node) {
     if (this.get_a_node(this.get_selection.startContainer) === this.get_a_node(node))
       return true;
@@ -69,25 +77,34 @@ class Mark {
     return null;
   }
 
+  create_spare_node(node) {
+    let spare_node = document.createElement(node.nodeName)
+    if (node.classList.length > 0)
+      spare_node.classList = node.classList; 
+    let parts = spare_node.outerHTML.match(/<[^>]+>/g);
+    return parts; 
+  }
+
   wrap_inside_node() {
     let range = this.get_selection
     let node = range.startContainer;
     node = this.get_a_node(node);
     let html = node.innerHTML;
-    // document.createElement(node.nodeName)
-    // .classList = node.classList // puis recuperer le debut et la fin du node creer et les inserer avant et apres la new mark pour eviter de se retrouver avec des nodes text autour des marks
-     debugger;
-    html =  this.insert_text_in_text(html, this.end_mark(), range.endOffset);
-    html =  this.insert_text_in_text(html, this.start_mark(), range.startOffset);
-    node.innerHTML = html;
+    let parts = this.create_spare_node(node);
+    html =  this.insert_text_in_text(html, this.end_mark(parts[0]), range.endOffset);
+    html =  this.insert_text_in_text(html, this.start_mark(parts[1]), range.startOffset);
+    html =  this.insert_text_in_text(html, parts[0], 0);
+    html =  this.insert_text_in_text(html, parts[1], html.length);
+    node.outerHTML = html;
   }
 
   wrap_begin_node(node) {
     let range = this.get_selection
     node = this.get_a_node(node);
     let html = node.innerHTML;
-    html =  this.insert_text_in_text(html, this.end_mark(), html.length);
-    html =  this.insert_text_in_text(html, this.start_mark(), range.startOffset);
+    let parts = this.create_spare_node(node);
+    html =  this.insert_text_in_text(html, this.end_mark(parts[0]), html.length);
+    html =  this.insert_text_in_text(html, this.start_mark(parts[1]), range.startOffset);
     node.innerHTML = html;
   }
 
@@ -95,8 +112,9 @@ class Mark {
     let range = this.get_selection
     node = this.get_a_node(node);
     let html = node.innerHTML;
-    html =  this.insert_text_in_text(html, this.end_mark(), range.endOffset);
-    html =  this.insert_text_in_text(html, this.start_mark(), 0);
+    let parts = this.create_spare_node(node);
+    html =  this.insert_text_in_text(html, this.end_mark(parts[0]), range.endOffset);
+    html =  this.insert_text_in_text(html, this.start_mark(parts[1]), 0);
     node.innerHTML = html;
   }
 
@@ -135,6 +153,7 @@ class Mark {
     return (before + text + after);
   }
 
+  /*
   is_include_in(div, to_find) {
     to_find = this.get_a_node(to_find);
     for(var key of div.childNodes.values()) { 
@@ -144,7 +163,20 @@ class Mark {
       }
     }
     return false;
-  }
+  }*/
+
+
+  is_include_in(div, to_find) {
+    to_find = this.get_a_node(to_find);
+    let children = div.querySelectorAll(to_find.nodeName);
+    for(var key of children.values()) { 
+      if (key == to_find)
+      {
+        return true;
+      }
+    }
+    return false;
+  } 
 
   create_surround_node() {
     let mark = document.createElement(`mark${this._number}`);
@@ -154,11 +186,11 @@ class Mark {
     return (mark);
   }
 
-  start_mark() {
-    return '<mark' + this._number + ' class="mark' + this._number + " cas_general mark" + '">';
+  start_mark(part) {
+    return part + '<mark' + this._number + ' class="mark' + this._number + " cas_general mark" + '">';
   }
-  end_mark() {
-  return '</mark' + this._number + '>';
+  end_mark(part) {
+    return '</mark' + this._number + '>' + part;
   }
 
   wrap_node(node) {
