@@ -33,17 +33,17 @@ class Mark {
       return false;
     if (node === container)
       return true;
-    is_node_in_container(container, node.parentNode);
+    return this.is_node_in_container(container, node.parentNode);
   }
 
   begin_node(node) {
-    if (this.get_a_node(this.get_selection.startContainer) === this.get_a_node(node))
+ if (this.is_node_in_container(this.get_a_node(node), this.get_a_node(this.get_selection.startContainer)))
       return true;
     return false;
   }
 
   end_node(node) {
-    if (this.get_a_node(this.get_selection.endContainer) === this.get_a_node(node))
+ if (this.is_node_in_container(this.get_a_node(node), this.get_a_node(this.get_selection.endContainer)))
       return true;
     return false;
   }
@@ -128,6 +128,7 @@ class Mark {
       this.wrap_inside_node();
     }
     else {
+      debugger;
       for (var node of array) {
         if (this.begin_node(node))
         {
