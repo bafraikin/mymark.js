@@ -212,7 +212,7 @@ class Mark {
 	}
 }
 
-document.querySelector('#isSelectionable').addEventListener("mouseup", () =>{
+document.body.addEventListener("mouseup", () =>{
 	a = new Mark();
 	console.log(a);
 	if (!a.failed)
